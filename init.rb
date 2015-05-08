@@ -25,7 +25,9 @@ Redmine::Plugin.register :redmine_wiki_macro_ext do
 			@included_wiki_pages ||= []
 	        raise 'Circular inclusion detected' if @included_wiki_pages.include?(page.title)
 	        @included_wiki_pages << page.title
-	        out = textilizable(page.content.to_s[/^(h[1-6]\..*)^h[1-6]\./sm, 1], :text, :attachments => page.attachments, :headings => false)
+                #content = page.content[/^(h[1-6]\.*)/sm]
+		#out = page.content.text
+	        out = textilizable(page.content.text[/^(h[1-6]\..*?)^h[1-6]\./sm, 1], :attachments => page.attachments, :headings => false)
 	        @included_wiki_pages.pop
 	        out
 
