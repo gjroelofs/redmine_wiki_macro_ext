@@ -18,14 +18,14 @@ Redmine::Plugin.register :redmine_wiki_macro_ext do
 
 		macro :summary do |obj, args|
 
-			args, options = extract_macro_options(args, :header)
-
 			page = nil
-			if args.size == 1
+			if args.size >= 1
 				page = Wiki.find_page(args.first.to_s, :project => @project)
 			else
 				raise 'Page not found' if page.nil? || !User.current.allowed_to?(:view_wiki_pages, page.wiki.project)
 			end
+
+			args, options = extract_macro_options(args, :header)
 
 			n = options[:header]
                         raise 'Invalid header parameter' unless n.nil? || n.match(/\d+$/)
@@ -53,10 +53,11 @@ Redmine::Plugin.register :redmine_wiki_macro_ext do
              "{{include(Foo, header=N)}} -- to adjust the header number by N"
       macro :include do |obj, args|
 
-        args, options = extract_macro_options(args, :header)
         page = Wiki.find_page(args.first.to_s, :project => @project)
         raise 'Page not found' if page.nil? || !User.current.allowed_to?(:view_wiki_pages, page.wiki.project)
-        n = options[:header]
+        
+	args, options = extract_macro_options(args, :header)
+	n = options[:header]
                         raise 'Invalid header parameter' unless n.nil? || n.match(/\d+$/)
         n = n.to_i
 
