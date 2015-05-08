@@ -20,9 +20,9 @@ Redmine::Plugin.register :redmine_wiki_macro_ext do
 			else
 				raise 'Page not found' if page.nil? || !User.current.allowed_to?(:view_wiki_pages, page.wiki.project)
 			end
-			
+
 			# Match to the text between the first and second header. (nclude header)
-			var match = page.content.to_s[/^(h[1-6]\..*)^h[1-6]\./sm, 1]
+			match = page.content.to_s[/^(h[1-6]\..*)^h[1-6]\./sm, 1]
 
 
         	out = textilizable(match, :text, :headings => false)
