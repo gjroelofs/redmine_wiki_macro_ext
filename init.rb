@@ -19,7 +19,8 @@ Redmine::Plugin.register :redmine_wiki_macro_ext do
 				page = Wiki.find_page(args.first.to_s, :project => @project)
 			else
 				raise 'Page not found' if page.nil? || !User.current.allowed_to?(:view_wiki_pages, page.wiki.project)
-
+			end
+			
 			# Match to the text between the first and second header. (nclude header)
 			var match = page.content.to_s[/^(h[1-6]\..*)^h[1-6]\./sm, 1]
 
