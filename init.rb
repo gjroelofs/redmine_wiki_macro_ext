@@ -25,7 +25,7 @@ Redmine::Plugin.register :redmine_wiki_macro_ext do
 			match = page.content.to_s[/^(h[1-6]\..*)^h[1-6]\./sm, 1]
 
 
-        	out = textilizable(match, :text, :headings => false)
+        	out = textilizable(match)
         	out
 		end 
 	end
