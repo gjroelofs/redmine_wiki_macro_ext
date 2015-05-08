@@ -27,7 +27,7 @@ Redmine::Plugin.register :redmine_wiki_macro_ext do
 	        @included_wiki_pages << page.title
                 #content = page.content[/^(h[1-6]\.*)/sm]
 		#out = page.content.text
-	        out = textilizable(page.content.text[/^(h[1-6]\..*?)^h[1-6]\./sm, 1], :attachments => page.attachments, :headings => false)
+	        out = textilizable(page.content.text[/(h[1-6]\..*?)(^h[1-6]\.|\Z)/sm, 1], :attachments => page.attachments, :headings => false)
 	        @included_wiki_pages.pop
 	        out
 
