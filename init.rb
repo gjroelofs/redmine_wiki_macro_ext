@@ -45,5 +45,29 @@ Redmine::Plugin.register :redmine_wiki_macro_ext do
 
 		end 
 	end
-        
+     
+      Redmine::WikiFormatting::Macros.register do
+	desc "Includes a wiki page. Examples:\n\n" +
+             "{{include(Foo)}}\n" +
+             "{{include(projectname:Foo)}} -- to include a page of a specific project wiki\n" +
+             "{{include(Foo, header=N)}} -- to adjust the header number by N"
+      macro :include do |obj, args|
+
+        args, options = extract_macro_options(args, :header)
+        page = Wiki.find_page(args.first.to_s, :project => @project)
+        raise 'Page not found' if page.nil? || !User.current.allowed_to?(:view_wiki_pages, page.wiki.project)
+        n = options[:header]
+                        raise 'Invalid header parameter' unless n.nil? || n.match(/\d+$/)
+        n = n.to_i
+
+        @included_wiki_pages ||= []
+        raise 'Circular inclusion detected' if @included_wiki_pages.include?(page.title)
+        @included_wiki_pages << page.title
+        text = page.content.text.gsub(/h([1-6])\./) {"h" + ([6,[1, $1.to_i + n].max].min).to_s + "."}
+        out = textilizable(text, :attachments => page.attachments, :headings => false)
+        @included_wiki_pages.pop
+        out
+      		end 
+	end 
+       
 end
