@@ -22,11 +22,13 @@ Redmine::Plugin.register :redmine_wiki_macro_ext do
 			end
 
 			# Match to the text between the first and second header. (nclude header)
-			match = page.content.to_s[/^(h[1-6]\..*)^h[1-6]\./sm, 1]
+			@included_wiki_pages ||= []
+	        raise 'Circular inclusion detected' if @included_wiki_pages.include?(page.title)
+	        @included_wiki_pages << page.title
+	        out = textilizable(page.content.to_s[/^(h[1-6]\..*)^h[1-6]\./sm, 1], :text, :attachments => page.attachments, :headings => false)
+	        @included_wiki_pages.pop
+	        out
 
-
-        	out = textilizable(match)
-        	out
 		end 
 	end
         
