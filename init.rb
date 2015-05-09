@@ -28,7 +28,7 @@ Redmine::Plugin.register :redmine_wiki_macro_ext do
 			args, options = extract_macro_options(args, :header)
 
 			n = options[:header]
-                        raise 'Invalid header parameter' unless n.nil? || n.match(/\d+$/)
+                        raise 'Invalid header parameter' unless n.nil? || n.match(/^-?\d+$/)
 			n = n.to_i
 
 			# Match to the text between the first and second header. (nclude header)
@@ -36,9 +36,21 @@ Redmine::Plugin.register :redmine_wiki_macro_ext do
 
 		        raise 'Circular inclusion detected' if @included_wiki_pages.include?(page.title)
 		        @included_wiki_pages << page.title
-               	 	#content = page.content[/^(h[1-6]\.*)/sm]
+               	 	
 			text = page.content.text[/(h[1-6]\..*?)(^h[1-6]\.|\Z)/sm, 1]
+
+			# Create the fake TOC without the title section
+                        pagelink = " [[" + args.first + "#"
+			tocRaw = page.content.text.scan(/^h([1-6])\. +(.+?)\s*$/)
+			tocDeduct = tocRaw.first.first.to_i
+			toc = tocRaw.drop(1).map{
+			    |i| "*" * (i.first.to_i - tocDeduct) + pagelink + i.last + "|" + i.last + "]]\n"
+			}.join
+
+			# Transpose the section headers
 			text = text.gsub(/h([1-6])\./) {"h" + ([6,[1, $1.to_i + n].max].min).to_s + "."}
+                        text = text + "\n" + toc
+
 	 	      	out = textilizable(text, :attachments => page.attachments, :headings => false)
 	        	@included_wiki_pages.pop
 	        	out
@@ -65,6 +77,7 @@ Redmine::Plugin.register :redmine_wiki_macro_ext do
         raise 'Circular inclusion detected' if @included_wiki_pages.include?(page.title)
         @included_wiki_pages << page.title
         text = page.content.text.gsub(/h([1-6])\./) {"h" + ([6,[1, $1.to_i + n].max].min).to_s + "."}
+        
         out = textilizable(text, :attachments => page.attachments, :headings => false)
         @included_wiki_pages.pop
         out
