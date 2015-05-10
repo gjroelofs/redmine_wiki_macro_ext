@@ -1,5 +1,8 @@
 require 'redmine'
 require 'open-uri'
+require 'wikimacroext/patches/application_helper_patch'
+
+ApplicationHelper.send(:include, WikiMacroExt::Patches::ApplicationHelperPatch)  unless    ApplicationHelper.included_modules.include? WikiMacroExt::Patches::ApplicationHelperPatch
 
 Redmine::Plugin.register :redmine_wiki_macro_ext do
   name 'Redmine Wiki Macro extensions plugin'
@@ -51,7 +54,7 @@ Redmine::Plugin.register :redmine_wiki_macro_ext do
 			text = text.gsub(/h([1-6])\./) {"h" + ([6,[1, $1.to_i + n].max].min).to_s + "."}
                         text = text + "\n" + toc
 
-	 	      	out = textilizable(text, :attachments => page.attachments, :headings => false)
+	 	      	out = textilizable(text, :object => page, :attachments => page.attachments, :headings => true, :edit_first => true, :edit_section_links => (true && {:controller => 'wiki', :action => 'edit', :project_id => page.project, :id => page.title}))
 	        	@included_wiki_pages.pop
 	        	out
 
@@ -78,10 +81,11 @@ Redmine::Plugin.register :redmine_wiki_macro_ext do
         @included_wiki_pages << page.title
         text = page.content.text.gsub(/h([1-6])\./) {"h" + ([6,[1, $1.to_i + n].max].min).to_s + "."}
         
-        out = textilizable(text, :attachments => page.attachments, :headings => false)
+        out = textilizable(text, :object => page, :attachments => page.attachments, :headings => true, :edit_first => true, :edit_section_links => (true && {:controller => 'wiki', :action => 'edit', :project_id => page.project, :id => page.title}))
         @included_wiki_pages.pop
         out
       		end 
 	end 
        
 end
+
