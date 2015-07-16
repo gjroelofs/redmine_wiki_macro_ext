@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'redmine'
 require 'open-uri'
 require 'wikimacroext/patches/application_helper_patch'
