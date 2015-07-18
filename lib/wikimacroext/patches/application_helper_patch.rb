@@ -1,4 +1,5 @@
-# encoding: utf-8
+# encoding: UTF-8
+
 require_dependency 'application_helper'
 
 module WikiMacroExt

@@ -1,4 +1,5 @@
-# encoding: utf-8
+# encoding: UTF-8
+
 require 'redmine'
 require 'open-uri'
 require 'wikimacroext/patches/application_helper_patch'
@@ -9,7 +10,7 @@ Redmine::Plugin.register :redmine_wiki_macro_ext do
   name 'Redmine Wiki Macro extensions plugin'
   author 'CodePoKE'
   description 'Contains various macro extensions for Redmine Wiki, such as: {{summary()}}'
-  version '0.0.1'
+  version '0.0.2'
   url 'https://github.com/gjroelofs/redmine_wiki_macro_ext.git'
   author_url 'gj.roelofs@codepoke.net'
 
