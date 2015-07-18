@@ -42,7 +42,7 @@ Redmine::Plugin.register :redmine_wiki_macro_ext do
 		        raise 'Circular inclusion detected' if @included_wiki_pages.include?(page.title)
 		        @included_wiki_pages << page.title
                	 	
-			text = page.content.text[/(h[1-6]\..*?)(^h[1-6]\.|\Z)/sm, 1]
+			text = page.content.text[/(h[1-6]\..*?)(^h[1-6]\.|\Z)/m, 1]
 
 			# Create the fake TOC without the title section
                         pagelink = " [[" + args.first + "#"
